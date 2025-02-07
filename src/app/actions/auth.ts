@@ -12,15 +12,16 @@ export async function loginAction(formData: FormData) {
   const password = formData.get('password') as string;
 
   const result = loginSchema.safeParse({ username, password, name });
-  console.log('result', result);
 
   if (!result.success) {
-    return { error: result.error.flatten().fieldErrors };
+    const errorMessage = result.error.errors
+      .map((err) => err.message)
+      .join(', ');
+    throw new Error(`Invalid Data: ${errorMessage}`);
   }
 
   try {
     const response = await login(result.data);
-    console.log('response', response);
     const c = await cookies();
     c.set('token', response.accessToken, {
       httpOnly: true,
@@ -28,13 +29,11 @@ export async function loginAction(formData: FormData) {
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7,
     });
-    redirect('/');
   } catch (error) {
-    console.log('error', error);
-    return { error: 'Invalid Data' };
+    throw new Error(`Login failed. ${error}`);
   }
+  redirect('/');
 }
-
 export async function registerAction(formData: FormData) {
   const username = formData.get('username') as string;
   const name = formData.get('name') as string;
@@ -43,17 +42,17 @@ export async function registerAction(formData: FormData) {
   const result = registerSchema.safeParse({ username, password, name });
 
   if (!result.success) {
-    console.log('result', result);
-    return { error: result.error.flatten().fieldErrors };
+    const errorMessage = result.error.errors
+      .map((err) => err.message)
+      .join(', ');
+    throw new Error(`Invalid Data: ${errorMessage}`);
   }
-
-  console.log('result', result);
 
   try {
     await register(result.data);
   } catch (e) {
     console.log('error', e);
-    return { error: `Registration failed. ` };
+    throw new Error('Registration failed');
   }
 
   redirect('/auth/login');
@@ -65,6 +64,7 @@ export async function logoutAction() {
     c.delete('token');
   } catch (error) {
     console.log('error', error);
-    return { error: 'Logout failed' };
+    throw new Error('Logout failed');
   }
+  redirect('/auth/login');
 }
