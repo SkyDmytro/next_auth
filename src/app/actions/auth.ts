@@ -26,7 +26,7 @@ export async function registerAction(formData: RegisterFormData) {
   try {
     await register(formData);
   } catch (e) {
-    console.log('error', e);
+    console.error('error', e);
     throw new Error('Registration failed');
   }
 
