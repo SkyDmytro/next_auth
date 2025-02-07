@@ -1,38 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Authentication App
 
-## Getting Started
+## Tech Stack
 
-First, run the development server:
+- **Next.js**: React framework for SSR and performance optimization
+- **Tailwind CSS**: Utility-first CSS framework for styling
+- **Shadcn**: UI components library
+- **React Hook Form**: Form management
+- **Zod**: Schema validation
+- **ESLint**: Code linting
+- **GitHub Actions**: CI automation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Project Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This project is a small authentication web application using Next.js. It connects to an existing authentication API to handle user login and registration. The app ensures proper authentication and authorization by implementing route guards and redirects.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- User login and registration
+- Form validation with React Hook Form & Zod
+- Route protection (redirect unauthenticated users to the login page)
+- Server-Side Rendering (SSR) without affecting authentication state
+- Custom UI Kit using Tailwind CSS & Shadcn
+- ESLint configuration for code quality
+- CI/CD with GitHub Actions
 
-## Learn More
+## Setup & Installation
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  
+	`git clone https://github.com/SkyDmytro/next_auth.git`
 
-## Deploy on Vercel
+	`cd next-auth`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Install dependencies:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+	`npm install`
 
-# nextjs_template
+3. Set up environment variables (create a .env file):
+	`NEXT_PUBLIC_API_URL=https://your-api-url.com`
+
+5. Run the development server:
+`npm run dev`
