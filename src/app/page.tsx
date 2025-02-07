@@ -3,7 +3,6 @@ import { getServerSession } from '@/lib/auth/session';
 
 export default async function HomePage() {
   const session = await getServerSession();
-  console.log('session', session);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -11,7 +10,7 @@ export default async function HomePage() {
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-semibold text-gray-900">
-              Welcome, {session.user?.name || 'User'}!
+              Welcome, {session.user?.username || 'User'}!
             </h1>
             <LogoutButton />
           </div>
