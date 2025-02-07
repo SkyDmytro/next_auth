@@ -7,9 +7,8 @@ export async function getServerSession(): Promise<{
   user: User | null;
   token: string | null;
 }> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value ?? null;
-  console.log('token', token);
 
   if (!token) {
     return { user: null, token: null };
@@ -17,7 +16,6 @@ export async function getServerSession(): Promise<{
 
   try {
     const user = await getCurrentUser(token);
-    console.log('user', user);
     return { user, token };
   } catch (error) {
     console.error('Error:', error);

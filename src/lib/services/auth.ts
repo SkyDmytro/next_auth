@@ -8,7 +8,6 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 export async function login(
   credentials: LoginFormData,
 ): Promise<LoginResponse> {
-  console.log('credentials', credentials);
   try {
     const response = await fetch(`${API_URL}${authUrl}/login`, {
       method: 'POST',
@@ -54,7 +53,6 @@ export async function getCurrentUser(token: string) {
     },
     credentials: 'include',
   });
-  console.log('res', response);
   if (!response.ok) {
     throw new Error('Failed to get user');
   }
