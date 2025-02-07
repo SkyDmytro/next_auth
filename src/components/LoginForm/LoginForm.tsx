@@ -1,28 +1,36 @@
 'use client';
 
 import { loginAction } from '@/app/actions/auth';
+import { LoginFormData, loginSchema } from '@/lib/schemas/auth';
 
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 export const LoginForm = () => {
-  const [error, setError] = useState<string | null>(null);
-  const handleSubmit = async (data: FormData) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    mode: 'onChange',
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
     try {
       await loginAction(data);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError('Something went wrong');
-      }
+      throw new Error(`Login failed. ${error}`);
     }
   };
+
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <Label
           htmlFor="name"
@@ -30,7 +38,16 @@ export const LoginForm = () => {
         >
           Name
         </Label>
-        <Input id="name" name="name" type="text" required className="mt-1" />
+        <Input
+          {...register('name', { required: true })}
+          id="name"
+          name="name"
+          type="text"
+          className="mt-1"
+        />
+        {errors.name && (
+          <span className="text-red-500">{errors.name.message}</span>
+        )}
       </div>
       <div>
         <Label
@@ -40,12 +57,15 @@ export const LoginForm = () => {
           Username
         </Label>
         <Input
+          {...register('username', { required: true })}
           id="username"
           name="username"
           type="text"
-          required
           className="mt-1"
         />
+        {errors.username && (
+          <span className="text-red-500">{errors.username.message}</span>
+        )}
       </div>
       <div>
         <Label
@@ -55,14 +75,16 @@ export const LoginForm = () => {
           Password
         </Label>
         <Input
+          {...register('password', { required: true })}
           id="password"
           name="password"
           type="password"
-          required
           className="mt-1"
         />
+        {errors.password && (
+          <span className="text-red-500">{errors.password.message}</span>
+        )}
       </div>
-      {error && <span className="text-red-500">{error}</span>}
       <Button type="submit" className="w-full">
         Sign in
       </Button>

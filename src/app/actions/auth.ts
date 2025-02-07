@@ -1,27 +1,14 @@
 'use server';
 
-import { loginSchema, registerSchema } from '@/lib/schemas/auth';
+import { LoginFormData, RegisterFormData } from '@/lib/schemas/auth';
 import { login, register } from '@/lib/services/auth';
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-export async function loginAction(formData: FormData) {
-  const username = formData.get('username') as string;
-  const name = formData.get('name') as string;
-  const password = formData.get('password') as string;
-
-  const result = loginSchema.safeParse({ username, password, name });
-
-  if (!result.success) {
-    const errorMessage = result.error.errors
-      .map((err) => err.message)
-      .join(', ');
-    throw new Error(`Invalid Data: ${errorMessage}`);
-  }
-
+export async function loginAction(formData: LoginFormData) {
   try {
-    const response = await login(result.data);
+    const response = await login(formData);
     const c = await cookies();
     c.set('token', response.accessToken, {
       httpOnly: true,
@@ -30,26 +17,14 @@ export async function loginAction(formData: FormData) {
       maxAge: 60 * 60 * 24 * 7,
     });
   } catch (error) {
-    throw new Error(`Login failed. ${error}`);
+    console.error('Login failed.', error);
+    throw new Error('Login failed.');
   }
   redirect('/');
 }
-export async function registerAction(formData: FormData) {
-  const username = formData.get('username') as string;
-  const name = formData.get('name') as string;
-  const password = formData.get('password') as string;
-
-  const result = registerSchema.safeParse({ username, password, name });
-
-  if (!result.success) {
-    const errorMessage = result.error.errors
-      .map((err) => err.message)
-      .join(', ');
-    throw new Error(`Invalid Data: ${errorMessage}`);
-  }
-
+export async function registerAction(formData: RegisterFormData) {
   try {
-    await register(result.data);
+    await register(formData);
   } catch (e) {
     console.log('error', e);
     throw new Error('Registration failed');

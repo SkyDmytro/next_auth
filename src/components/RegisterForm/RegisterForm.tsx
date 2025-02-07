@@ -1,29 +1,34 @@
 'use client';
 
 import { registerAction } from '@/app/actions/auth';
+import { RegisterFormData, registerSchema } from '@/lib/schemas/auth';
 
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
 export const RegisterForm = () => {
-  const [error, setError] = useState<string | null>(null);
-  const handleSubmit = async (data: FormData): Promise<void> => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    mode: 'onChange',
+  });
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       await registerAction(data);
     } catch (err: unknown) {
       console.error('Registration error:', err);
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Something went wrong');
-      }
     }
   };
   return (
-    <form action={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <Label
           htmlFor="name"
@@ -31,7 +36,16 @@ export const RegisterForm = () => {
         >
           Name
         </Label>
-        <Input id="name" name="name" type="text" required className="mt-1" />
+        <Input
+          id="name"
+          {...register('name', { required: true })}
+          className="mt-1"
+        />
+        {errors.name && (
+          <span className="text-red-500 text-sm mt-2">
+            {errors.name.message}
+          </span>
+        )}
       </div>
       <div>
         <Label
@@ -42,11 +56,14 @@ export const RegisterForm = () => {
         </Label>
         <Input
           id="username"
-          name="username"
-          type="text"
-          required
+          {...register('username', { required: true })}
           className="mt-1"
         />
+        {errors.username && (
+          <span className="text-red-500 text-sm mt-2">
+            {errors.username.message}
+          </span>
+        )}
       </div>
       <div>
         <Label
@@ -57,13 +74,16 @@ export const RegisterForm = () => {
         </Label>
         <Input
           id="password"
-          name="password"
+          {...register('password', { required: true })}
           type="password"
-          required
           className="mt-1"
         />
+        {errors.password && (
+          <span className="text-red-500 text-sm mt-2">
+            {errors.password.message}
+          </span>
+        )}
       </div>
-      {error && <span className="text-red-500 text-sm mt-2">{error}</span>}
       <Button type="submit" className="w-full">
         Sign up
       </Button>
